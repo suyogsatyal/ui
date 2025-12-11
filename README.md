@@ -64,16 +64,13 @@ src/
 ## Data Flow
 ```mermaid
 flowchart TD
-    A[api/users.ts<br/>getUsers()] --> B[UserGrid.tsx]
-    B --> C[UserCard × N]
-    C -->|View button| D[UserDetailsModal]
+    A[getUsers()] --> B[UserGrid]
+    B --> C[UserCard]
+    C --> D[UserDetailsModal]
 
-    E[Navbar Search Input] --> F[useSearchStore<br/>Zustand]
-    F --> G[Users.tsx<br/>Dashboard.tsx]
-    G -->|live filter| H[Filtered User Grid]
-
-    style A fill:#1f2937, color:#fff
-    style F fill:#3b82f6, color:#fff
+    E[Search Input] --> F[useSearchStore]
+    F --> G[UserGrid]
+    G --> H[Filtered Cards]
 ```
 -   User data is fetched asynchronously from api/users.ts (mock API with delay)
 -   UserGrid loads users → renders UserCard components
