@@ -64,13 +64,13 @@ src/
 ## Data Flow
 ```mermaid
 flowchart TD
-    A[getUsers()] --> B[UserGrid]
-    B --> C[UserCard]
-    C --> D[UserDetailsModal]
+    A["getUsers()"] --> B["UserGrid"]
+    B --> C["UserCard"]
+    C --> D["UserDetailsModal"]
 
-    E[Search Input] --> F[useSearchStore]
-    F --> G[UserGrid]
-    G --> H[Filtered Cards]
+    E["Search Input"] --> F["useSearchStore"]
+    F --> G["UserGrid"]
+    G --> H["Filtered Cards"]
 ```
 -   User data is fetched asynchronously from api/users.ts (mock API with delay)
 -   UserGrid loads users → renders UserCard components
