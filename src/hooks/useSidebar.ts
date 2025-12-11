@@ -1,35 +1,45 @@
-// src/hooks/useSidebar.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; // optional but recommended
+import { persist } from "zustand/middleware";
 
 type SidebarState = {
     isOpen: boolean;
     toggle: () => void;
     open: () => void;
     close: () => void;
+    hydrated: boolean; // tells UI when state is restored
 };
-
-// Option 1: Simple in-memory store (perfect for interview/take-home)
-// export const useSidebar = create<SidebarState>((set) => ({
-//     isOpen: true, // default open on desktop
-//     toggle: () => set((state) => ({ isOpen: !state.isOpen })),
-//     open: () => set({ isOpen: true }),
-//     close: () => set({ isOpen: false }),
-// }));
-
-// Option 2: Persisted across refreshes (shows you think about UX)
-// Uncomment this and comment out the one above if you want persistence
 
 export const useSidebar = create<SidebarState>()(
     persist(
         (set) => ({
-            isOpen: true,
-            toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+            // temporary SSR-safe value; will be replaced after hydration
+            isOpen: false,
+            hydrated: false,
+
+            toggle: () =>
+                set((state) => ({ isOpen: !state.isOpen })),
             open: () => set({ isOpen: true }),
             close: () => set({ isOpen: false }),
         }),
         {
-            name: "sidebar-state", // key in localStorage
+            name: "sidebar-state",
+            onRehydrateStorage: () => (state) => {
+                if (!state) return;
+
+                // After hydration, decide whether to use stored value or responsive default
+                const defaultIsOpen =
+                    typeof window !== "undefined"
+                        ? window.innerWidth >= 786
+                        : true;
+
+                // If no stored state, set responsive default
+                if (state.isOpen === undefined) {
+                    state.isOpen = defaultIsOpen;
+                }
+
+                // Mark store as hydrated
+                state.hydrated = true;
+            },
         }
     )
 );
